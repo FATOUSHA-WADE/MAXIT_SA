@@ -1,388 +1,205 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire CNI - Version Corrigée</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        .input-focus:focus {
-            outline: none;
-            border-color: #ea580c;
-            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
-        }
-        .container-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-    </style>
-</head>
-<body class="bg-gray-50 py-8">
-    <!-- Toast container -->
-    <div id="toast" class="fixed top-4 right-4 z-50 hidden">
-        <div class="bg-white border-l-4 p-4 shadow-lg rounded-lg max-w-md"></div>
+<?php
+ $errors = $this->session->unset('errors') ?? [];
+ $success = $this->session->unset('success') ?? '';
+?>
+ <div class="w-full max-w-md">
+        <?php if ($success): ?>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+                <strong class="font-bold">Succès!</strong>
+                <span class="block sm:inline"><?= htmlspecialchars($success) ?></span>
+            </div>
+        <?php endif; ?>
+    </div>
+<div class="bg-white rounded-lg container-shadow p-8 mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-3xl font-bold text-gray-800">
+            <span class="text-orange-600">MAXIT</span> SA
+        </h1>
     </div>
 
-    <div class="bg-white rounded-lg container-shadow p-8 mx-auto max-w-2xl">
-        <div class="text-center mb-12">
-            <h1 class="text-3xl font-bold text-gray-800">
-                <span class="text-orange-600">MAXIT</span> SA
-            </h1>
-        </div>
-
-        <form class="space-y-6" action="/register" method="POST" enctype="multipart/form-data" id="registrationForm">
-            <!-- CNI -->
+    <!-- Formulaire -->
+    <form class="space-y-6" action="/register" method="POST" enctype="multipart/form-data">
+        <!-- Ligne 1: NOM et PRENOM -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-orange-600 font-semibold mb-2">
-                    Numéro CNI <span class="text-orange-600">*</span>
+                    NOM <span class="text-orange-600">*</span>
                 </label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd"></path>
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                         </svg>
                     </div>
                     <input 
                         type="text" 
                         class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg text-gray-700 input-focus transition-all duration-200"
-                        name="numero_cni"
-                        id="numero_cni"
-                        maxlength="13"
-                        placeholder="Entrez votre numéro CNI (13 chiffres)"
+                        name="nom"
+                        value="<?= htmlspecialchars($old['nom'] ?? '') ?>"
                     >
                 </div>
+                <?php if (!empty($errors['nom'])): ?>
+                    <?php foreach ($errors['nom'] as $error): ?>
+                        <div class="text-red-600 text-xs mt-1"><?= htmlspecialchars($error) ?></div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
-
-            <!-- Bouton de vérification CNI -->
-            <div class="mt-4">
-                <button type="button" 
-                        id="checkCitizenBtn" 
-                        class="w-full px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="bi bi-search"></i> Vérifier le citoyen
-                </button>
+            <div>
+                <label class="block text-orange-600 font-semibold mb-2">
+                    PRENOM <span class="text-orange-600">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <input 
+                        type="text" 
+                        class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg text-gray-700 input-focus transition-all duration-200"
+                        name="prenom"
+                        value="<?= htmlspecialchars($old['prenom'] ?? '') ?>"
+                    >
+                </div>
+                <?php if (!empty($errors['prenom'])): ?>
+                    <?php foreach ($errors['prenom'] as $error): ?>
+                        <div class="text-red-600 text-xs mt-1"><?= htmlspecialchars($error) ?></div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
-
-            <!-- Message de statut -->
-            <div id="statusMessage" class="mt-3 text-center hidden">
-                <!-- Le message de statut sera inséré ici -->
-            </div>
-
-            <!-- Champs masqués par défaut -->
-            <div id="hiddenFields" class="hidden space-y-6">
-                <!-- Nom et Prénom -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-orange-600 font-semibold mb-2">
-                            Nom <span class="text-orange-600">*</span>
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="bi bi-person text-gray-400"></i>
-                            </div>
-                            <input type="text" 
-                                   name="nom" 
-                                   id="nom" 
-                                   readonly 
-                                   class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg bg-gray-100">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-orange-600 font-semibold mb-2">
-                            Prénom <span class="text-orange-600">*</span>
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="bi bi-person text-gray-400"></i>
-                            </div>
-                            <input type="text" 
-                                   name="prenom" 
-                                   id="prenom" 
-                                   readonly 
-                                   class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg bg-gray-100">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Autres champs -->
-                <div>
-                    <label class="block text-orange-600 font-semibold mb-2">
-                        Numéro Téléphone <span class="text-orange-600">*</span>
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="bi bi-telephone text-gray-400"></i>
-                        </div>
-                        <input type="tel" 
-                               name="numero_telephone" 
-                               required 
-                               class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg input-focus">
-                    </div>
-                </div>
-
-                <!-- Mot de passe -->
-                <div>
-                    <label class="block text-orange-600 font-semibold mb-2">
-                        Mot de passe <span class="text-orange-600">*</span>
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="bi bi-lock text-gray-400"></i>
-                        </div>
-                        <input type="password" 
-                               name="password" 
-                               required 
-                               class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg input-focus">
-                    </div>
-                </div>
-
-                <!-- Photos CNI -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-orange-600 font-semibold mb-2">
-                            Photo Recto CNI <span class="text-orange-600">*</span>
-                        </label>
-                        <input type="file" 
-                               name="photorecto" 
-                               required 
-                               accept="image/*"
-                               class="w-full px-3 py-2 border-2 border-orange-300 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-orange-600 font-semibold mb-2">
-                            Photo Verso CNI <span class="text-orange-600">*</span>
-                        </label>
-                        <input type="file" 
-                               name="photoverso" 
-                               required 
-                               accept="image/*"
-                               class="w-full px-3 py-2 border-2 border-orange-300 rounded-lg">
-                    </div>
-                </div>
-
-                <!-- Bouton de soumission -->
-                <button type="submit" 
-                        id="submitBtn" 
-                        disabled 
-                        class="w-full px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="bi bi-check-circle"></i> Créer mon compte
-                </button>
-            </div>
-        </form>
-
-        <!-- Section de debug -->
-        <div class="mt-8 p-4 bg-gray-100 rounded-lg">
-            <h3 class="font-bold text-gray-700 mb-2">Debug Console:</h3>
-            <div id="debugConsole" class="text-sm text-gray-600 font-mono bg-white p-2 rounded max-h-40 overflow-y-auto"></div>
         </div>
-    </div>
 
-    <script>
-        // Fonction de debug pour afficher les messages dans la console de debug
-        function debugLog(message) {
-            const debugConsole = document.getElementById('debugConsole');
-            const timestamp = new Date().toLocaleTimeString();
-            debugConsole.innerHTML += `[${timestamp}] ${message}<br>`;
-            debugConsole.scrollTop = debugConsole.scrollHeight;
-            console.log(message);
-        }
+        <!-- CIN -->
+        <div>
+            <label class="block text-orange-600 font-semibold mb-2">
+                CIN <span class="text-orange-600">*</span>
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd"></path>
+                </div>
+                <input 
+                    type="text" 
+                    class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg text-gray-700 input-focus transition-all duration-200"
+                    name="numero_cni"
+                    value="<?= htmlspecialchars($old['numero_cni'] ?? '') ?>"
+                >
 
-        document.addEventListener('DOMContentLoaded', function() {
-            debugLog('Script chargé et DOM prêt !');
-            
-            // Vérifiez que les éléments sont trouvés
-            const elements = {
-                cniInput: document.getElementById('numero_cni'),
-                hiddenFields: document.getElementById('hiddenFields'),
-                submitBtn: document.getElementById('submitBtn'),
-                checkBtn: document.getElementById('checkCitizenBtn'),
-                form: document.getElementById('registrationForm'),
-                statusMessage: document.getElementById('statusMessage')
-            };
-            
-            debugLog('Éléments trouvés: ' + JSON.stringify(Object.keys(elements).reduce((acc, key) => {
-                acc[key] = elements[key] ? 'OK' : 'NOT FOUND';
-                return acc;
-            }, {})));
-            
-            const { cniInput, hiddenFields, submitBtn, checkBtn, form, statusMessage } = elements;
-            
-            // Fonction pour afficher les toasts
-            function showToast(message, type = 'success') {
-                debugLog(`Toast: ${type} - ${message}`);
-                const toast = document.getElementById('toast');
-                const toastContent = toast.querySelector('div');
-                
-                // Définir la couleur de la bordure selon le type
-                const borderColor = type === 'success' ? 'border-green-500' : 'border-red-500';
-                const bgColor = type === 'success' ? 'bg-green-50' : 'bg-red-50';
-                const textColor = type === 'success' ? 'text-green-800' : 'text-red-800';
-                
-                toastContent.className = `p-4 ${borderColor} ${bgColor} ${textColor} rounded-lg shadow-lg`;
-                toastContent.textContent = message;
-                
-                // Afficher le toast
-                toast.classList.remove('hidden');
-                
-                // Cacher le toast après 3 secondes
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                }, 3000);
-            }
+            </div>
+            <?php if (!empty($errors['numero_cni'])): ?>
+                <?php foreach ($errors['numero_cni'] as $error): ?>
+                    <div class="text-red-600 text-xs mt-1"><?= htmlspecialchars($error) ?></div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
 
-            // Validation du numéro CNI
-            function isValidCNI(cni) {
-                const isValid = /^\d{13}$/.test(cni);
-                debugLog(`Validation CNI "${cni}": ${isValid ? 'VALIDE' : 'INVALIDE'}`);
-                return isValid;
-            }
+        <!-- Numero Telephone -->
+        <div>
+            <label class="block text-orange-600 font-semibold mb-2">
+                Numero Telephone <span class="text-orange-600">*</span>
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                    </svg>
+                </div>
+                <input 
+                    type="tel" 
+                    class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg text-gray-700 input-focus transition-all duration-200"
+                    name="numero_telephone"
+                    value="<?= htmlspecialchars($old['numero_telephone'] ?? '') ?>"
+                >
+            </div>
+            <?php if (!empty($errors['numero_telephone'])): ?>
+                <?php foreach ($errors['numero_telephone'] as $error): ?>
+                    <div class="text-red-600 text-xs mt-1"><?= htmlspecialchars($error) ?></div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
 
-            // Fonction pour simuler l'API (pour test)
-            function simulateAPICall(cni) {
-                debugLog(`Simulation API pour CNI: ${cni}`);
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        // Simuler des données de test
-                        if (cni === '1234567890123') {
-                            resolve({
-                                data: {
-                                    nom: 'DIOP',
-                                    prenom: 'Amadou'
-                                }
-                            });
-                        } else {
-                            reject(new Error('Citoyen non trouvé'));
-                        }
-                    }, 1000);
-                });
-            }
-
-            // Gestionnaire du bouton de vérification
-            if (checkBtn) {
-                checkBtn.addEventListener('click', async function() {
-                    debugLog('Bouton vérification cliqué !');
+        <!-- Ajouter après le champ téléphone -->
+        <div>
+            <label class="block text-orange-600 font-semibold mb-2">
+                Mot de passe <span class="text-orange-600">*</span>
+            </label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <input 
+                    type="password" 
+                    class="w-full pl-10 pr-4 py-3 border-2 border-orange-300 rounded-lg text-gray-700 input-focus transition-all duration-200"
+                    name="password"
+                    placeholder="Entrez votre mot de passe"
                     
-                    const cni = cniInput.value.trim();
-                    debugLog(`CNI saisi: "${cni}"`);
+                >
+            </div>
+            <?php if (!empty($errors['password'])): ?>
+                <?php foreach ($errors['password'] as $error): ?>
+                    <div class="text-red-600 text-xs mt-1"><?= htmlspecialchars($error) ?></div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <!-- Ligne 2: RECTO CIN et VERSO CIN -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-orange-600 font-semibold mb-2">
+                    RECTO CIN <span class="text-orange-600">*</span>
+                </label>
+                <div class="upload-area flex flex-col items-center justify-center p-6" onclick="document.getElementById('recto').click()">
+                    <svg class="w-8 h-8 text-gray-800 mb-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-orange-600 font-medium">Clip To Update</span>
+                    <input type="file" id="recto" class="hidden" accept="image/*" name="photorecto" value="<?= htmlspecialchars($old['photorecto'] ?? '') ?>">
+                  
+                </div>
+                  <?php if (!empty($errors['photorecto'])): ?>
+                <?php foreach ($errors['photorecto'] as $error): ?>
+                    <div class="text-red-600 text-xs mt-1"><?= htmlspecialchars($error) ?></div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            </div>
+            <div>
+                <label class="block text-orange-600 font-semibold mb-2">
+                    VERSO CIN <span class="text-orange-600">*</span>
+                </label>
+                <div class="upload-area flex flex-col items-center justify-center p-6" onclick="document.getElementById('verso').click()">
+                    <svg class="w-8 h-8 text-gray-800 mb-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-orange-600 font-medium">Clip To Update</span>
+                    <input type="file" id="verso" class="hidden" accept="image/*" name="photoverso" value="<?= htmlspecialchars($old['photoverso'] ?? '') ?>">
                     
-                    // Réinitialiser l'interface
-                    hiddenFields.classList.add('hidden');
-                    submitBtn.disabled = true;
-                    statusMessage.classList.add('hidden');
-                    
-                    // Vérifier le format CNI
-                    if (!isValidCNI(cni)) {
-                        showToast('Le numéro CNI doit contenir exactement 13 chiffres', 'error');
-                        return;
-                    }
+                </div>
+                <?php if (!empty($errors['photoverso'])): ?>
+                <?php foreach ($errors['photoverso'] as $error): ?>
+                    <div class="text-red-600 text-xs mt-1"><?= htmlspecialchars($error) ?></div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            </div>
+        </div>
 
-                    // Désactiver le bouton pendant la vérification
-                    checkBtn.disabled = true;
-                    checkBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Vérification...';
-                    debugLog('Début de la vérification...');
+        <!-- Bouton créer mon compte -->
+        <div class="flex justify-center pt-6">
+            <button class="px-12 py-4 black-button text-orange-600 font-semibold rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
+                créer mon Compte
+            </button>
+        </div>
+    </form>
 
-                    try {
-                        // Utiliser la simulation d'API pour les tests
-                        // Remplacez par votre vraie API en production
-                        const useRealAPI = false; // Changez à true pour utiliser la vraie API
-                        
-                        debugLog(`Utilisation ${useRealAPI ? 'vraie API' : 'simulation API'}`);
-                        
-                        let data;
-                        if (useRealAPI) {
-                            const response = await fetch(`https://appdaf-0soa.onrender.com/citoyens/${cni}`);
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            data = await response.json();
-                        } else {
-                            data = await simulateAPICall(cni);
-                        }
-
-                        debugLog('Données reçues: ' + JSON.stringify(data));
-
-                        // Vérifier la structure des données reçues
-                        if (data && data.data && data.data.nom && data.data.prenom) {
-                            // Obtenir les références des champs
-                            const nomInput = document.getElementById('nom');
-                            const prenomInput = document.getElementById('prenom');
-                            
-                            // Définir les valeurs
-                            nomInput.value = data.data.nom;
-                            prenomInput.value = data.data.prenom;
-                            
-                            debugLog(`Champs remplis: nom="${nomInput.value}", prenom="${prenomInput.value}"`);
-                            
-                            // S'assurer que les champs sont en lecture seule
-                            nomInput.readOnly = true;
-                            prenomInput.readOnly = true;
-                            
-                            // Afficher les champs cachés
-                            hiddenFields.classList.remove('hidden');
-                            submitBtn.disabled = false;
-                            
-                            showToast('Citoyen trouvé');
-                            statusMessage.innerHTML = '<div class="text-green-600"><i class="bi bi-check-circle"></i> Citoyen vérifié avec succès</div>';
-                            statusMessage.classList.remove('hidden');
-                            
-                            debugLog('Vérification réussie !');
-                        } else {
-                            throw new Error('Format de données invalide');
-                        }
-                    } catch (error) {
-                        debugLog('Erreur: ' + error.message);
-                        showToast('Aucun citoyen trouvé avec ce numéro de CNI', 'error');
-                        statusMessage.innerHTML = '<div class="text-red-600"><i class="bi bi-x-circle"></i> Aucun citoyen trouvé</div>';
-                        statusMessage.classList.remove('hidden');
-                    } finally {
-                        // Réactiver le bouton
-                        checkBtn.disabled = false;
-                        checkBtn.innerHTML = '<i class="bi bi-search"></i> Vérifier le citoyen';
-                        debugLog('Bouton réactivé');
-                    }
-                });
-                
-                debugLog('Event listener ajouté au bouton de vérification');
-            } else {
-                debugLog('ERREUR: Bouton de vérification non trouvé !');
-            }
-
-            // Validation du formulaire
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    debugLog('Soumission du formulaire');
-                    const cni = cniInput.value.trim();
-                    if (!isValidCNI(cni)) {
-                        e.preventDefault();
-                        showToast('Numéro CNI invalide', 'error');
-                        debugLog('Soumission bloquée: CNI invalide');
-                    }
-                });
-                debugLog('Event listener ajouté au formulaire');
-            } else {
-                debugLog('ERREUR: Formulaire non trouvé !');
-            }
-
-            // Ajout d'un listener sur le champ CNI pour feedback en temps réel
-            if (cniInput) {
-                cniInput.addEventListener('input', function() {
-                    const cni = this.value.trim();
-                    debugLog(`CNI modifié: "${cni}"`);
-                    
-                    if (cni.length === 13) {
-                        if (isValidCNI(cni)) {
-                            this.style.borderColor = '#16a34a'; // Vert
-                        } else {
-                            this.style.borderColor = '#dc2626'; // Rouge
-                        }
-                    } else {
-                        this.style.borderColor = '#fb923c'; // Orange par défaut
-                    }
-                });
-                debugLog('Event listener ajouté au champ CNI');
-            }
-
-            debugLog('=== Initialisation terminée ===');
-        });
-    </script>
-</body>
-</html>
+    <!-- Affichage des messages d'erreur globaux -->
+    <?php if (!empty($errors['global'])): ?>
+        <div class="mb-6">
+            <?php foreach ($errors['global'] as $error): ?>
+                <div class="text-red-600 text-sm mb-1"><?= htmlspecialchars($error) ?></div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>

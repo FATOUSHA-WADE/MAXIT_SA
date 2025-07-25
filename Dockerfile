@@ -23,7 +23,7 @@ RUN composer install --no-dev --optimize-autoloader
 
 # Configure Nginx
 COPY .docker/nginx/default.conf /etc/nginx/sites-available/default
-RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+RUN ln -sf /etc/nginx/sites-available/default 
 RUN rm -f /etc/nginx/sites-enabled/default.bak
 
 # Set permissions
