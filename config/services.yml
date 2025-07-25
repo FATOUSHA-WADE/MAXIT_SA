@@ -1,0 +1,16 @@
+core:
+  - App\Core\DataBase
+  - App\Core\Session
+  - App\Core\Router
+  - App\Core\Validator
+
+services:
+  - App\Services\SecurityService
+  - App\Services\SmsService
+  - App\Services\TransactionService
+  - App\Services\CompteService
+
+repositories:
+  - App\Repositories\UserRepository
+  - App\Repositories\CompteRepository
+  - App\Repositories\TransactionRepository
